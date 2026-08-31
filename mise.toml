@@ -1,0 +1,9 @@
+[tools]
+go = "latest"
+
+[env]
+_.file = ".env"
+
+[tasks.start]
+run = "go run ./internal"
+description = "Run the main.go file"
