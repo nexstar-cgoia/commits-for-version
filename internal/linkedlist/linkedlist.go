@@ -1,6 +1,8 @@
 package linkedlist
 
-import "iter"
+import (
+	"iter"
+)
 
 type Node struct {
 	SHA     *string

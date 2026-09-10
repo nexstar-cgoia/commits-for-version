@@ -1,0 +1,23 @@
+name: PR Check
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Format & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+
+      - name: Check formatting
+        run: mise run format-check
+
+      - name: Run tests
+        run: mise run test
