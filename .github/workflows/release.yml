@@ -12,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
 
       - name: Setup mise
-        uses: jdx/mise-action@v2
+        uses: jdx/mise-action@v4.3.0
 
       - name: Build for Linux
         env:
@@ -24,6 +24,6 @@ jobs:
         run: go build -o bin/commits-for-version-linux-amd64 ./internal
 
       - name: Upload binary to release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3.0.3
         with:
           files: bin/commits-for-version-linux-amd64
