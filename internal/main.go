@@ -6,9 +6,18 @@ import (
 	"commits-for-version/internal/linkedlist"
 	"commits-for-version/internal/utils"
 	"fmt"
+	"os"
 )
 
 func main() {
+
+	args := os.Args
+	if len(args) != 2 {
+		panic("incorrect number of arguments: example usage: ./program \"<version>\"")
+	}
+
+	version := args[1]
+
 	gc, err := github.NewClient()
 	if err != nil {
 		panic(err)
@@ -19,7 +28,7 @@ func main() {
 		panic(err)
 	}
 
-	lines, err := run(gc, jc, "Flow 2.5")
+	lines, err := run(gc, jc, version)
 	if err != nil {
 		panic(err)
 	}
