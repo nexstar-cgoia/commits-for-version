@@ -2,6 +2,7 @@ package github
 
 import (
 	"context"
+	"errors"
 	"os"
 
 	"github.com/google/go-github/v90/github"
@@ -13,34 +14,37 @@ const (
 	GITHUB_TOKEN = "GITHUB_TOKEN"
 )
 
-var gClient *github.Client
-
-func init() {
-	if gClient != nil {
-		return
-	}
-	var err error
-	token := os.Getenv(GITHUB_TOKEN)
-
-	if token == "" {
-		panic("GITHUB_TOKEN is not set")
-	}
-
-	gClient, err = github.NewClient(github.WithAuthToken(token))
-	if err != nil {
-		panic(err)
-	}
+type CommitsClient interface {
+	GetCommits() ([]*github.RepositoryCommit, error)
 }
 
-func GetCommits() error {
-	context := context.Background()
-	commits, _, e := gClient.Repositories.ListCommits(context, OWNER, REPO, nil)
-	if e != nil {
-		return e
+type Client struct {
+	c *github.Client
+}
+
+func NewClient() (*Client, error) {
+	token := os.Getenv(GITHUB_TOKEN)
+	if token == "" {
+		return nil, errors.New("GITHUB_TOKEN is not set")
 	}
 
-	for _, commit := range commits {
-		println(commit.Commit.GetMessage())
+	c, err := github.NewClient(github.WithAuthToken(token))
+	if err != nil {
+		return nil, err
 	}
-	return nil
+
+	return &Client{c: c}, nil
+}
+
+func (cl *Client) GetCommits() ([]*github.RepositoryCommit, error) {
+	context := context.Background()
+
+	commits, _, e := cl.c.Repositories.ListCommits(context, OWNER, REPO, &github.CommitsListOptions{
+		SHA: "stage",
+	})
+	if e != nil {
+		return []*github.RepositoryCommit{}, e
+	}
+
+	return commits, nil
 }

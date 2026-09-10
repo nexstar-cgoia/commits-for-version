@@ -7,3 +7,19 @@ _.file = ".env"
 [tasks.start]
 run = "go run ./internal"
 description = "Run the main.go file"
+
+[tasks.build]
+run = "go build -o bin/app ./internal"
+description = "Build the Go application"
+
+[tasks.format]
+run = "gofmt -w ."
+description = "Format the Go code"
+
+[tasks.format-check]
+run = "test -z \"$(gofmt -l .)\""
+description = "Check formatting without modifying files; fails if any file is not gofmt-formatted"
+
+[tasks.test]
+run = "go test ./..."
+description = "Run the tests"

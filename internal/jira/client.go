@@ -2,6 +2,7 @@ package jira
 
 import (
 	"context"
+	"errors"
 	"os"
 
 	v2 "github.com/ctreminiom/go-atlassian/v2/jira/v2"
@@ -18,31 +19,37 @@ type Ticket struct {
 	Summary string
 }
 
-var jClient *v2.Client
+type IssuesClient interface {
+	GetIssues(version string) ([]Ticket, error)
+}
 
-func init() {
+type Client struct {
+	c *v2.Client
+}
+
+func NewClient() (*Client, error) {
 	jiraToken := os.Getenv(JIRA_TOKEN)
 	jiraUser := os.Getenv(JIRA_USER)
 	if jiraToken == "" || jiraUser == "" {
-		panic("JIRA_TOKEN or JIRA_USER is not set")
+		return nil, errors.New("JIRA_TOKEN or JIRA_USER is not set")
 	}
 
-	client, err := v2.New(nil, HOST)
+	c, err := v2.New(nil, HOST)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	client.Auth.SetBasicAuth(jiraUser, jiraToken)
-	jClient = client
+	c.Auth.SetBasicAuth(jiraUser, jiraToken)
+	return &Client{c: c}, nil
 }
 
 func getQuery(version string) string {
 	return `project = OTT AND fixversion = "` + version + `" ORDER BY cf[10019] ASC`
 }
 
-func GetIssues(version string) ([]Ticket, error) {
+func (cl *Client) GetIssues(version string) ([]Ticket, error) {
 	context := context.Background()
-	issues, _, err := jClient.Issue.Search.SearchJQL(context, getQuery(version), []string{"Key", "summary"}, []string{}, 50, "")
+	issues, _, err := cl.c.Issue.Search.SearchJQL(context, getQuery(version), []string{"Key", "summary"}, []string{}, 50, "")
 	if err != nil {
 		return nil, err
 	}
