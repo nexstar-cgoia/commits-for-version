@@ -6,8 +6,8 @@ package main
 import "commits-for-version/cmd"
 
 var (
-	Version   = "dev"
-	Build = "unknown"
+	Version = "dev"
+	Build   = "unknown"
 )
 
 func main() {
