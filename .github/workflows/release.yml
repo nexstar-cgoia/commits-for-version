@@ -21,7 +21,7 @@ jobs:
         env:
           GOOS: linux
           GOARCH: amd64
-        run: go build -o bin/commits-for-version-linux-amd64 ./internal
+        run: go build -ldflags "-X main.Version=${{ github.event.release.tag_name }} -X main.Build=${{ github.sha }}" -o bin/commits-for-version-linux-amd64 .
 
       - name: Upload binary to release
         uses: softprops/action-gh-release@v3.0.3

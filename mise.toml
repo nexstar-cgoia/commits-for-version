@@ -8,8 +8,12 @@ _.file = ".env"
 run = "go run ./internal"
 description = "Run the main.go file"
 
+[tasks.cmd]
+run = "go run ."
+description = "Run the main.go file from the cmd directory"
+
 [tasks.build]
-run = "go build -o bin/app ./internal"
+run = "go build -o bin/commits-for-version ."
 description = "Build the Go application"
 
 [tasks.format]
@@ -23,3 +27,7 @@ description = "Check formatting without modifying files; fails if any file is no
 [tasks.test]
 run = "go test ./..."
 description = "Run the tests"
+
+[tasks.vet]
+run = "go vet ./..."
+description = "Run the Go vet tool to examine Go source code for potential issues"
