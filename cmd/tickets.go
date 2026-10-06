@@ -20,14 +20,24 @@ var ticketsCmd = &cobra.Command{
 			return err
 		}
 
+		reFlag, _ := cmd.Flags().GetBool("re")
+		reParts := make([]string, 0, len(tickets))
 		for _, t := range tickets {
 			println(t.Key, "-", t.Summary)
+			if reFlag {
+				newString := strings.Replace(t.Key, "OTT-", "", -1)
+				println("Transformed ticket key:", newString)
+				reParts = append(reParts, newString)
+			}
 		}
-
+		if reFlag {
+			println("OR regex for ticket keys:", strings.Join(reParts, "|"))
+		}
 		return nil
 	},
 }
 
 func init() {
+	ticketsCmd.Flags().Bool("re", false, "when used it prints a regex with all ticket numbers")
 	rootCmd.AddCommand(ticketsCmd)
 }
